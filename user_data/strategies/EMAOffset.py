@@ -1,18 +1,13 @@
 # --- Do not remove these libs ---
-import numpy as np
-import pandas as pd
-from pandas import DataFrame
 from datetime import datetime
-from typing import Optional, Union
+from typing import Dict
 
-from freqtrade.strategy import (BooleanParameter, CategoricalParameter, DecimalParameter,
-                                IntParameter, IStrategy, merge_informative_pair)
+import talib.abstract as ta
+from pandas import DataFrame
+
+from freqtrade.strategy import IStrategy
 
 # --------------------------------
-# Add your lib to import here
-import talib.abstract as ta
-import pandas_ta as pta
-from technical import qtpylib
 
 
 class EMAOffset(IStrategy):
@@ -108,7 +103,7 @@ class EMAOffset(IStrategy):
                 
                 # Entry conditions
                 (dataframe['rsi'] < self.buy_params['rsi_buy']) &  # RSI oversold
-                (dataframe['close'] < dataframe['ema50'] * self.buy_params['ema_offset']) &  # Price below EMA with offset
+                (dataframe['close'] < dataframe['ema50'] * self.buy_params['ema_offset']) &
                 (dataframe['volume'] > dataframe['volume_mean'] * 0.75)  # Volume check
             ),
             'enter_long'] = 1
@@ -123,7 +118,7 @@ class EMAOffset(IStrategy):
             (
                 # Exit conditions
                 (dataframe['rsi'] > self.sell_params['rsi_sell']) &  # RSI overbought
-                (dataframe['close'] > dataframe['ema50'] * self.sell_params['ema_offset_high']) &  # Price above EMA with offset
+                (dataframe['close'] > dataframe['ema50'] * self.sell_params['ema_offset_high']) &
                 (dataframe['volume'] > 0)  # Volume check
             ),
             'exit_long'] = 1
